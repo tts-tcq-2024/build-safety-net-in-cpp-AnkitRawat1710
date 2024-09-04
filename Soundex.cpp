@@ -27,18 +27,16 @@ bool canAppendSoundexDigit(const std::string& soundex, char currentCode, char pr
 
 void processCharacter(const std::string& name, std::string& soundex, char& previousCode, size_t index) {
     char currentCode = mapToSoundexDigit(name[index]);
-    
+
     if (canAppendSoundexDigit(soundex, currentCode, previousCode)) {
         soundex += currentCode;
-    }
-
-    if (!isIgnorable(currentCode)) {
-        previousCode = currentCode;
+        previousCode = currentCode; // Update previousCode only when appending
     }
 }
 
 void processCharacters(const std::string& name, std::string& soundex) {
     char previousCode = mapToSoundexDigit(name[0]);
+    soundex += previousCode; // Append the first character's code
 
     for (size_t i = 1; i < name.length() && soundex.length() < 4; ++i) {
         processCharacter(name, soundex, previousCode, i);
@@ -48,7 +46,7 @@ void processCharacters(const std::string& name, std::string& soundex) {
 std::string generateSoundex(const std::string& name) {
     if (name.empty()) return "";
 
-    std::string soundex(1, toupper(name[0]));
+    std::string soundex;
     processCharacters(name, soundex);
 
     soundex.append(4 - soundex.length(), '0');
