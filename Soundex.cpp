@@ -2,7 +2,7 @@
 #include <cctype>
 #include <unordered_map>
 
-// Function to map a character to its corresponding Soundex digit
+// Function to convert a character to its corresponding Soundex digit
 char mapToSoundexDigit(char c) {
     static const std::unordered_map<char, char> soundexMap = {
         {'B', '1'}, {'F', '1'}, {'P', '1'}, {'V', '1'},
@@ -13,20 +13,35 @@ char mapToSoundexDigit(char c) {
         {'R', '6'}
     };
 
-    c = toupper(c);
-    auto it = soundexMap.find(c);
-    return it != soundexMap.end() ? it->second : '0';
+    char uppercaseChar = toupper(c);
+    auto it = soundexMap.find(uppercaseChar);
+    return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Function to check if a character's Soundex digit is ignorable
-bool isIgnorable(char code) {
-    return code == '0';
+// Function to check if a Soundex digit is ignorable
+bool isIgnorable(char digit) {
+    return digit == '0';
+}
+
+// Function to check if a Soundex digit should be appended
+bool shouldAppendDigit(const std::string& soundex, char digit) {
+    return !soundex.empty() && soundex.back() != digit;
 }
 
 // Function to append a Soundex digit to the result if it's valid
 void appendSoundexDigit(std::string& soundex, char digit) {
-    if (soundex.length() < 4 && !isIgnorable(digit) && (soundex.empty() || soundex.back() != digit)) {
+    if (soundex.length() < 4 && !isIgnorable(digit) && shouldAppendDigit(soundex, digit)) {
         soundex += digit;
+    }
+}
+
+// Function to process each character in the name
+void processCharacters(const std::string& name, std::string& soundex) {
+    char previousCode = mapToSoundexDigit(name[0]);
+    for (size_t i = 1; i < name.length() && soundex.length() < 4; ++i) {
+        char currentCode = mapToSoundexDigit(name[i]);
+        appendSoundexDigit(soundex, currentCode);
+        previousCode = currentCode;
     }
 }
 
@@ -35,15 +50,9 @@ std::string generateSoundex(const std::string& name) {
     if (name.empty()) return "";
 
     std::string soundex(1, toupper(name[0]));
-    char prevCode = mapToSoundexDigit(name[0]);
+    processCharacters(name, soundex);
 
-    for (size_t i = 1; i < name.length() && soundex.length() < 4; ++i) {
-        char currentCode = mapToSoundexDigit(name[i]);
-        appendSoundexDigit(soundex, currentCode);
-        prevCode = currentCode;
-    }
-
+    // Pad with zeros if needed
     soundex.append(4 - soundex.length(), '0');
     return soundex;
 }
-
