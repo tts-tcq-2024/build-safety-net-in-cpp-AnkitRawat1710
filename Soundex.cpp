@@ -22,14 +22,14 @@ bool isIgnorable(char digit) {
 }
 
 bool canAppendSoundexDigit(const std::string& soundex, char currentCode, char previousCode) {
-    return !isIgnorable(currentCode) && (currentCode != previousCode);
+    return soundex.length() < 4 && !isIgnorable(currentCode) && (currentCode != previousCode);
 }
 
 void processCharacter(const std::string& name, std::string& soundex, char& previousCode, size_t index) {
     char currentCode = mapToSoundexDigit(name[index]);
     
     if (canAppendSoundexDigit(soundex, currentCode, previousCode)) {
-        appendSoundexDigit(soundex, currentCode);
+        soundex += currentCode;
     }
 
     if (!isIgnorable(currentCode)) {
