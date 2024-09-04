@@ -33,9 +33,14 @@ bool isDifferentFromPrevious(const std::string& soundex, char digit) {
     return soundex.empty() || soundex.back() != digit;
 }
 
+// Function to determine if a Soundex digit can be appended
+bool canAppendSoundexDigit(const std::string& soundex, char digit) {
+    return canAppendMoreDigits(soundex) && !isIgnorable(digit) && isDifferentFromPrevious(soundex, digit);
+}
+
 // Function to append a Soundex digit to the result if it's valid
 void appendSoundexDigit(std::string& soundex, char digit) {
-    if (canAppendMoreDigits(soundex) && !isIgnorable(digit) && isDifferentFromPrevious(soundex, digit)) {
+    if (canAppendSoundexDigit(soundex, digit)) {
         soundex += digit;
     }
 }
