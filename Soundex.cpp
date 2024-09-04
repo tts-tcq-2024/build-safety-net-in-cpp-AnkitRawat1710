@@ -46,3 +46,4 @@ std::string generateSoundex(const std::string& name) {
     soundex.append(4 - soundex.length(), '0');
     return soundex;
 }
+
