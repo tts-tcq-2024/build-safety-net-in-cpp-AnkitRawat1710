@@ -23,14 +23,19 @@ bool isIgnorable(char digit) {
     return digit == '0';
 }
 
-// Function to check if a Soundex digit should be appended
-bool shouldAppendDigit(const std::string& soundex, char digit) {
-    return !soundex.empty() && soundex.back() != digit;
+// Function to check if there is room to append another digit
+bool canAppendMoreDigits(const std::string& soundex) {
+    return soundex.length() < 4;
+}
+
+// Function to check if the digit is different from the last appended digit
+bool isDifferentFromPrevious(const std::string& soundex, char digit) {
+    return soundex.empty() || soundex.back() != digit;
 }
 
 // Function to append a Soundex digit to the result if it's valid
 void appendSoundexDigit(std::string& soundex, char digit) {
-    if (soundex.length() < 4 && !isIgnorable(digit) && shouldAppendDigit(soundex, digit)) {
+    if (canAppendMoreDigits(soundex) && !isIgnorable(digit) && isDifferentFromPrevious(soundex, digit)) {
         soundex += digit;
     }
 }
