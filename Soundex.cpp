@@ -19,34 +19,29 @@ char mapToSoundexDigit(char c) {
 }
 
 // Determines if a digit should be appended
-bool shouldAppendDigit(const std::string& soundex, char digit, char prevDigit) {
-    return soundex.length() < 4 && digit != '0' && digit != prevDigit;
-}
-
-// Processes characters to build the Soundex code
-void processCharacters(const std::string& name, std::string& soundex) {
-    if (name.empty()) return; // CCN = 1
-
-    char prevDigit = mapToSoundexDigit(name[0]);
-    soundex += toupper(name[0]); // Include the first letter's code
-
-    for (size_t i = 1; i < name.length(); ++i) { // CCN = 2
-        char currentDigit = mapToSoundexDigit(name[i]);
-        if (shouldAppendDigit(soundex, currentDigit, prevDigit)) {
-            soundex += currentDigit;
-        }
-        prevDigit = currentDigit;
-    }
+bool shouldAppendDigit(char digit, char prevDigit) {
+    return digit != '0' && digit != prevDigit;
 }
 
 // Main function to generate the Soundex code
 std::string generateSoundex(const std::string& name) {
-    std::string soundex;
-    processCharacters(name, soundex); // CCN = 1
+    if (name.empty()) return "0000"; // Handle empty string case
+    
+    std::string soundex(1, toupper(name[0])); // Include the first letter
+    char prevDigit = mapToSoundexDigit(name[0]);
 
-    // Ensure the result is exactly four characters long
+    for (size_t i = 1; i < name.length(); ++i) {
+        char currentDigit = mapToSoundexDigit(name[i]);
+        if (shouldAppendDigit(currentDigit, prevDigit)) {
+            soundex += currentDigit;
+        }
+        prevDigit = currentDigit;
+        if (soundex.length() == 4) break; // Stop if length reaches 4
+    }
+
+    // Pad with zeros if needed
     if (soundex.length() < 4) {
-        soundex.resize(4, '0'); // Pad with zeros if needed
+        soundex.append(4 - soundex.length(), '0');
     }
 
     return soundex;
