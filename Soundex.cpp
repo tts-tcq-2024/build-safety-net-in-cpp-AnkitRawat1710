@@ -30,23 +30,26 @@ bool shouldAppendDigit(const std::string& soundex, char currentCode, char previo
 
 // Processes characters to build the Soundex code
 void processCharacters(const std::string& name, std::string& soundex) {
+    if (name.empty()) return;
+    
     char previousCode = mapToSoundexDigit(name[0]);
     soundex += toupper(name[0]); // Include the first letter's code
 
     for (size_t i = 1; i < name.length(); ++i) {
-        char currentCode = mapToSoundexDigit(name[i]);
+        char currentChar = name[i];
+        char currentCode = mapToSoundexDigit(currentChar);
 
-        if (shouldAppendDigit(soundex, currentCode, previousCode)) {
-            soundex += currentCode;
-            previousCode = currentCode;
+        if (currentCode != previousCode && !isIgnorable(currentCode)) {
+            if (soundex.length() < 4) {
+                soundex += currentCode;
+            }
+            previousCode = currentCode; // Update previousCode only when appending
         }
     }
 }
 
 // Main function to generate the Soundex code
 std::string generateSoundex(const std::string& name) {
-    if (name.empty()) return "";
-
     std::string soundex;
     processCharacters(name, soundex);
     soundex.resize(4, '0'); // Pad with zeros to ensure the length is 4
