@@ -18,30 +18,30 @@ char mapToSoundexDigit(char c) {
     return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Determines if a digit should be appended
-bool shouldAppendDigit(char digit, char prevDigit) {
-    return digit != '0' && digit != prevDigit;
+// Adds a Soundex digit to the result, ensuring the length and validity
+void addSoundexDigit(std::string& soundex, char digit, char& prevDigit) {
+    if (digit != '0' && digit != prevDigit) {
+        soundex += digit;
+        prevDigit = digit;
+    }
 }
 
 // Main function to generate the Soundex code
 std::string generateSoundex(const std::string& name) {
-    if (name.empty()) return "0000"; // Handle empty string case
-    
-    std::string soundex(1, toupper(name[0])); // Include the first letter
+    if (name.empty()) return ""; // Return empty string for empty input
+
+    std::string soundex(1, toupper(name[0])); // Start with the first letter
     char prevDigit = mapToSoundexDigit(name[0]);
 
     for (size_t i = 1; i < name.length(); ++i) {
         char currentDigit = mapToSoundexDigit(name[i]);
-        if (shouldAppendDigit(currentDigit, prevDigit)) {
-            soundex += currentDigit;
-        }
-        prevDigit = currentDigit;
+        addSoundexDigit(soundex, currentDigit, prevDigit);
         if (soundex.length() == 4) break; // Stop if length reaches 4
     }
 
     // Pad with zeros if needed
-    if (soundex.length() < 4) {
-        soundex.append(4 - soundex.length(), '0');
+    while (soundex.length() < 4) {
+        soundex += '0';
     }
 
     return soundex;
