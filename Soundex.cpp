@@ -18,15 +18,14 @@ char mapToSoundexDigit(char c) {
     return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Appends a Soundex digit to the result if it is valid and not a duplicate
-void addSoundexDigit(std::string& soundex, char digit, char& prevDigit) {
+// Adds a Soundex digit to the result if it's valid and not a duplicate
+void addSoundexDigit(std::string& soundex, char digit, char prevDigit) {
     if (digit != '0' && digit != prevDigit && soundex.length() < 4) {
         soundex += digit;
-        prevDigit = digit;
     }
 }
 
-// Handles padding if the result is less than 4 characters
+// Pads the result string to ensure it has exactly 4 characters
 void padSoundex(std::string& soundex) {
     while (soundex.length() < 4) {
         soundex += '0';
@@ -40,10 +39,12 @@ std::string generateSoundex(const std::string& name) {
     std::string soundex(1, toupper(name[0])); // Start with the first letter
     char prevDigit = mapToSoundexDigit(name[0]);
 
-    for (size_t i = 1; i < name.length(); ++i) {
+    for (size_t i = 1; i < name.length() && soundex.length() < 4; ++i) {
         char currentDigit = mapToSoundexDigit(name[i]);
-        addSoundexDigit(soundex, currentDigit, prevDigit);
-        if (soundex.length() == 4) break; // Stop if length reaches 4
+        if (currentDigit != '0' && currentDigit != prevDigit) {
+            addSoundexDigit(soundex, currentDigit, prevDigit);
+            prevDigit = currentDigit;
+        }
     }
 
     padSoundex(soundex);
