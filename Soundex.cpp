@@ -21,9 +21,19 @@ bool isIgnorable(char digit) {
     return digit == '0';
 }
 
-void appendSoundexDigit(std::string& soundex, char digit) {
-    if (soundex.length() < 4 && !isIgnorable(digit)) {
-        soundex += digit;
+bool canAppendSoundexDigit(const std::string& soundex, char currentCode, char previousCode) {
+    return !isIgnorable(currentCode) && (currentCode != previousCode);
+}
+
+void processCharacter(const std::string& name, std::string& soundex, char& previousCode, size_t index) {
+    char currentCode = mapToSoundexDigit(name[index]);
+    
+    if (canAppendSoundexDigit(soundex, currentCode, previousCode)) {
+        appendSoundexDigit(soundex, currentCode);
+    }
+
+    if (!isIgnorable(currentCode)) {
+        previousCode = currentCode;
     }
 }
 
@@ -31,15 +41,7 @@ void processCharacters(const std::string& name, std::string& soundex) {
     char previousCode = mapToSoundexDigit(name[0]);
 
     for (size_t i = 1; i < name.length() && soundex.length() < 4; ++i) {
-        char currentCode = mapToSoundexDigit(name[i]);
-
-        if (currentCode != previousCode && !isIgnorable(currentCode)) {
-            appendSoundexDigit(soundex, currentCode);
-        }
-
-        if (!isIgnorable(currentCode)) {
-            previousCode = currentCode;
-        }
+        processCharacter(name, soundex, previousCode, i);
     }
 }
 
