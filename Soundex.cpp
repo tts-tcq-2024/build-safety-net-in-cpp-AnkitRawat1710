@@ -18,43 +18,36 @@ char mapToSoundexDigit(char c) {
     return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Checks if a digit is ignorable (i.e., '0')
-bool isIgnorable(char digit) {
-    return digit == '0';
-}
-
 // Determines if the current digit should be appended to the result
-bool shouldAppendDigit(const std::string& soundex, char currentCode, char previousCode) {
-    return soundex.length() < 4 && !isIgnorable(currentCode) && currentCode != previousCode;
-}
-
-// Appends a digit to the Soundex code if valid
-void appendDigit(std::string& soundex, char currentCode, char& previousCode) {
-    if (shouldAppendDigit(soundex, currentCode, previousCode)) {
-        soundex += currentCode;
-        previousCode = currentCode; // Update previousCode only when appending
-    }
+bool shouldAppendDigit(const std::string& soundex, char digit, char prevDigit) {
+    return soundex.length() < 4 && digit != '0' && digit != prevDigit;
 }
 
 // Processes characters to build the Soundex code
 void processCharacters(const std::string& name, std::string& soundex) {
     if (name.empty()) return; // CCN = 1
 
-    char previousCode = mapToSoundexDigit(name[0]);
+    char prevDigit = mapToSoundexDigit(name[0]);
     soundex += toupper(name[0]); // Include the first letter's code
 
     for (size_t i = 1; i < name.length(); ++i) { // CCN = 2
-        char currentChar = name[i];
-        char currentCode = mapToSoundexDigit(currentChar);
-        appendDigit(soundex, currentCode, previousCode); // Delegated to helper function
+        char currentDigit = mapToSoundexDigit(name[i]);
+        if (shouldAppendDigit(soundex, currentDigit, prevDigit)) {
+            soundex += currentDigit;
+        }
+        prevDigit = currentDigit;
     }
 }
 
 // Main function to generate the Soundex code
 std::string generateSoundex(const std::string& name) {
     std::string soundex;
-    processCharacters(name, soundex); // CCN = 2
-    soundex.resize(4, '0'); // Pad with zeros to ensure the length is 4
+    processCharacters(name, soundex); // CCN = 1
+
+    // Ensure the result is exactly four characters long
+    if (soundex.length() < 4) {
+        soundex.resize(4, '0'); // Pad with zeros if needed
+    }
 
     return soundex;
 }
