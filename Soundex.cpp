@@ -18,7 +18,7 @@ char mapToSoundexDigit(char c) {
     return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Determines if the current digit should be appended to the result
+// Determines if a digit should be appended
 bool shouldAppendDigit(const std::string& soundex, char digit, char prevDigit) {
     return soundex.length() < 4 && digit != '0' && digit != prevDigit;
 }
