@@ -18,11 +18,18 @@ char mapToSoundexDigit(char c) {
     return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Adds a Soundex digit to the result, ensuring the length and validity
+// Appends a Soundex digit to the result if it is valid and not a duplicate
 void addSoundexDigit(std::string& soundex, char digit, char& prevDigit) {
-    if (digit != '0' && digit != prevDigit) {
+    if (digit != '0' && digit != prevDigit && soundex.length() < 4) {
         soundex += digit;
         prevDigit = digit;
+    }
+}
+
+// Handles padding if the result is less than 4 characters
+void padSoundex(std::string& soundex) {
+    while (soundex.length() < 4) {
+        soundex += '0';
     }
 }
 
@@ -39,10 +46,6 @@ std::string generateSoundex(const std::string& name) {
         if (soundex.length() == 4) break; // Stop if length reaches 4
     }
 
-    // Pad with zeros if needed
-    while (soundex.length() < 4) {
-        soundex += '0';
-    }
-
+    padSoundex(soundex);
     return soundex;
 }
