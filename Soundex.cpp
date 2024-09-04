@@ -2,7 +2,7 @@
 #include <cctype>
 #include <unordered_map>
 
-// Maps characters to their corresponding Soundex digits
+// Function to convert a character to its corresponding Soundex digit
 char mapToSoundexDigit(char c) {
     static const std::unordered_map<char, char> soundexMap = {
         {'B', '1'}, {'F', '1'}, {'P', '1'}, {'V', '1'},
@@ -13,40 +13,56 @@ char mapToSoundexDigit(char c) {
         {'R', '6'}
     };
 
-    c = toupper(c);
-    auto it = soundexMap.find(c);
+    char uppercaseChar = toupper(c);
+    auto it = soundexMap.find(uppercaseChar);
     return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Adds a Soundex digit to the result if it's valid and not a duplicate
-void addSoundexDigit(std::string& soundex, char digit, char prevDigit) {
-    if (digit != '0' && digit != prevDigit && soundex.length() < 4) {
+// Function to check if a Soundex digit is ignorable
+bool isIgnorable(char digit) {
+    return digit == '0';
+}
+
+// Function to check if there is room to append another digit
+bool canAppendMoreDigits(const std::string& soundex) {
+    return soundex.length() < 4;
+}
+
+// Function to check if the digit is different from the last appended digit
+bool isDifferentFromPrevious(const std::string& soundex, char digit) {
+    return soundex.empty() || soundex.back() != digit;
+}
+
+// Function to determine if a Soundex digit can be appended
+bool canAppendSoundexDigit(const std::string& soundex, char digit) {
+    return canAppendMoreDigits(soundex) && !isIgnorable(digit) && isDifferentFromPrevious(soundex, digit);
+}
+
+// Function to append a Soundex digit to the result if it's valid
+void appendSoundexDigit(std::string& soundex, char digit) {
+    if (canAppendSoundexDigit(soundex, digit)) {
         soundex += digit;
     }
 }
 
-// Pads the result string to ensure it has exactly 4 characters
-void padSoundex(std::string& soundex) {
-    while (soundex.length() < 4) {
-        soundex += '0';
+// Function to process each character in the name
+void processCharacters(const std::string& name, std::string& soundex) {
+    char previousCode = mapToSoundexDigit(name[0]);
+    for (size_t i = 1; i < name.length() && soundex.length() < 4; ++i) {
+        char currentCode = mapToSoundexDigit(name[i]);
+        appendSoundexDigit(soundex, currentCode);
+        previousCode = currentCode;
     }
 }
 
-// Main function to generate the Soundex code
+// Main function to generate Soundex code
 std::string generateSoundex(const std::string& name) {
-    if (name.empty()) return ""; // Return empty string for empty input
+    if (name.empty()) return "";
 
-    std::string soundex(1, toupper(name[0])); // Start with the first letter
-    char prevDigit = mapToSoundexDigit(name[0]);
+    std::string soundex(1, toupper(name[0]));
+    processCharacters(name, soundex);
 
-    for (size_t i = 1; i < name.length() && soundex.length() < 4; ++i) {
-        char currentDigit = mapToSoundexDigit(name[i]);
-        if (currentDigit != '0' && currentDigit != prevDigit) {
-            addSoundexDigit(soundex, currentDigit, prevDigit);
-            prevDigit = currentDigit;
-        }
-    }
-
-    padSoundex(soundex);
+    // Pad with zeros if needed
+    soundex.append(4 - soundex.length(), '0');
     return soundex;
 }
