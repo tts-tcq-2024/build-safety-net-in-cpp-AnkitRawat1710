@@ -23,28 +23,27 @@ bool isIgnorable(char digit) {
     return digit == '0';
 }
 
-// Appends the current code to the Soundex string if valid
-bool shouldAppendSoundexDigit(const std::string& soundex, char currentCode, char previousCode) {
+// Determines if the current digit should be appended to the result
+bool shouldAppendDigit(const std::string& soundex, char currentCode, char previousCode) {
     return soundex.length() < 4 && !isIgnorable(currentCode) && currentCode != previousCode;
 }
 
-// Processes characters in the name to build the Soundex code
+// Processes characters to build the Soundex code
 void processCharacters(const std::string& name, std::string& soundex) {
     char previousCode = mapToSoundexDigit(name[0]);
     soundex += toupper(name[0]); // Include the first letter's code
 
     for (size_t i = 1; i < name.length(); ++i) {
-        char currentChar = name[i];
-        char currentCode = mapToSoundexDigit(currentChar);
+        char currentCode = mapToSoundexDigit(name[i]);
 
-        if (shouldAppendSoundexDigit(soundex, currentCode, previousCode)) {
+        if (shouldAppendDigit(soundex, currentCode, previousCode)) {
             soundex += currentCode;
-            previousCode = currentCode; // Update previousCode only when appending
+            previousCode = currentCode;
         }
     }
 }
 
-// Generates the Soundex code for a given name
+// Main function to generate the Soundex code
 std::string generateSoundex(const std::string& name) {
     if (name.empty()) return "";
 
