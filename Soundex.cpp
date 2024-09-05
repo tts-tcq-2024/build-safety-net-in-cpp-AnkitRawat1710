@@ -18,7 +18,7 @@ char mapToSoundexDigit(char c) {
     return (it != soundexMap.end()) ? it->second : '0';
 }
 
-// Function to check if a Soundex digit is ignorable
+// Function to check if a Soundex digit can be ignored
 bool isIgnorable(char digit) {
     return digit == '0';
 }
