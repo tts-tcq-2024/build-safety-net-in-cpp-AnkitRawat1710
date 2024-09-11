@@ -132,4 +132,4 @@ This document outlines the test cases designed to validate the implementation of
 
 
 ### **Conclusion**
-The test cases outlined in this document will ensure that the Soundex algorithm adheres to its specification and handles a wide range of input types, including common and edge cases. By maintaining these tests, the code will remain maintainable and extensible as future features are added.
+The test cases outlined in this document will ensure that the Soundex algorithm adheres to its specification and handles a wide range of input types, including common and edge cases.
