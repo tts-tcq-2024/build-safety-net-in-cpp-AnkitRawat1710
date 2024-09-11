@@ -1,6 +1,6 @@
 # **Test Specification Document**
 This document outlines the test cases designed to validate the implementation of the Soundex algorithm. The Soundex algorithm encodes words into a letter followed by three digits based on predefined rules, enhancing search capabilities by matching similarly sounding words. The document covers both functional and edge case scenarios to ensure the algorithm works as expected.
- 
+
 ### **Features to be Tested**
 1. Soundex Code Generation
    - Encoding a word to Soundex format as per defined rules.
@@ -129,7 +129,6 @@ This document outlines the test cases designed to validate the implementation of
 | **Rationale**     | The letters `B` and `F` both map to the same digit (1). The algorithm should encode them as a single '1'. |
 
 ---
-
 
 ### **Conclusion**
 The test cases outlined in this document will ensure that the Soundex algorithm adheres to its specification and handles a wide range of input types, including common and edge cases.
