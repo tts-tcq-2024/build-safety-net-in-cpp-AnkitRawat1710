@@ -58,11 +58,8 @@ void processCharacters(const std::string& name, std::string& soundex) {
 // Main function to generate Soundex code
 std::string generateSoundex(const std::string& name) {
     if (name.empty()) return "";
-
     std::string soundex(1, toupper(name[0]));
     processCharacters(name, soundex);
-
-    // Pad with zeros if needed
     soundex.append(4 - soundex.length(), '0');
     return soundex;
 }
